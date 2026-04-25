@@ -6,470 +6,243 @@
   <title>Prompt Generator</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #ffffff;
-      --bg2: #f5f5f3;
-      --bg3: #eeede9;
-      --text: #1a1a18;
-      --text2: #6b6b67;
-      --text3: #9e9e99;
-      --border: rgba(0,0,0,0.12);
-      --border2: rgba(0,0,0,0.22);
-      --success: #3b6d11;
-      --warning: #854f0b;
-      --danger: #a32d2d;
-      --radius: 8px;
-      --radius-lg: 12px;
+      --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeede9;
+      --text: #1a1a18; --text2: #6b6b67; --text3: #9e9e99;
+      --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+      --success: #3b6d11; --warning: #854f0b; --danger: #a32d2d;
+      --radius: 8px; --radius-lg: 12px;
       --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       --mono: 'SF Mono', 'Fira Code', monospace;
     }
-
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #1e1e1c;
-        --bg2: #2a2a28;
-        --bg3: #323230;
-        --text: #f0efeb;
-        --text2: #9e9e99;
-        --text3: #6b6b67;
-        --border: rgba(255,255,255,0.12);
-        --border2: rgba(255,255,255,0.22);
-        --success: #97c459;
-        --warning: #ef9f27;
-        --danger: #f09595;
+        --bg: #1e1e1c; --bg2: #2a2a28; --bg3: #323230;
+        --text: #f0efeb; --text2: #9e9e99; --text3: #6b6b67;
+        --border: rgba(255,255,255,0.12); --border2: rgba(255,255,255,0.22);
+        --success: #97c459; --warning: #ef9f27; --danger: #f09595;
       }
     }
-
-    body {
-      font-family: var(--font);
-      background: var(--bg3);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 2rem 1rem;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 680px;
-    }
-
-    .header {
-      margin-bottom: 1.75rem;
-    }
-
-    .header h1 {
-      font-size: 22px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 4px;
-    }
-
-    .header p {
-      font-size: 14px;
-      color: var(--text2);
-    }
-
-    .card {
-      background: var(--bg);
-      border-radius: var(--radius-lg);
-      border: 0.5px solid var(--border);
-      padding: 1.5rem;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 1.5rem;
-    }
-
-    .tab {
-      flex: 1;
-      padding: 10px 14px;
-      border: 0.5px solid var(--border2);
-      border-radius: var(--radius);
-      background: transparent;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--text2);
-      transition: all .15s;
-      font-family: var(--font);
-      text-align: center;
-    }
-
-    .tab.on {
-      background: var(--bg2);
-      color: var(--text);
-      border-color: var(--border2);
-      font-weight: 500;
-    }
-
-    .sec { display: none; }
-    .sec.on { display: block; }
-
+    body { font-family: var(--font); background: var(--bg3); color: var(--text); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+    .container { width: 100%; max-width: 680px; }
+    .header { margin-bottom: 1.5rem; }
+    .header h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+    .header p { font-size: 14px; color: var(--text2); }
+    .api-bar { display: flex; gap: 8px; margin-bottom: 6px; }
+    .api-bar input { flex: 1; padding: 8px 12px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); font-size: 13px; font-family: var(--font); outline: none; }
+    .api-save { padding: 8px 14px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--text); color: var(--bg); font-size: 13px; cursor: pointer; font-family: var(--font); font-weight: 500; white-space: nowrap; }
+    .api-status { font-size: 12px; color: var(--text3); margin-bottom: 1rem; }
+    .api-status.ok { color: var(--success); }
+    .card { background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 1.5rem; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+    .tab { flex: 1; padding: 10px 14px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: transparent; cursor: pointer; font-size: 13px; font-weight: 400; color: var(--text2); transition: all .15s; font-family: var(--font); text-align: center; }
+    .tab.on { background: var(--bg2); color: var(--text); font-weight: 500; }
+    .sec { display: none; } .sec.on { display: block; }
     .step { margin-bottom: 1rem; }
-
-    label.lbl {
-      font-size: 13px;
-      color: var(--text2);
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    input.inp, textarea.inp {
-      width: 100%;
-      padding: 8px 12px;
-      border: 0.5px solid var(--border2);
-      border-radius: var(--radius);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 14px;
-      font-family: var(--font);
-      transition: border-color .15s;
-      line-height: 1.5;
-    }
-
-    textarea.inp {
-      resize: vertical;
-      min-height: 120px;
-      line-height: 1.7;
-    }
-
-    input.inp:focus, textarea.inp:focus {
-      outline: none;
-      border-color: var(--border2);
-      box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .chip {
-      padding: 5px 12px;
-      border: 0.5px solid var(--border);
-      border-radius: 20px;
-      font-size: 13px;
-      cursor: pointer;
-      background: transparent;
-      color: var(--text2);
-      transition: all .15s;
-      font-family: var(--font);
-    }
-
-    .chip.on {
-      background: var(--bg2);
-      color: var(--text);
-      border-color: var(--border2);
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    @media (max-width: 480px) {
-      .row { grid-template-columns: 1fr; }
-    }
-
-    .btn {
-      width: 100%;
-      padding: 10px;
-      border: 0.5px solid var(--border2);
-      border-radius: var(--radius);
-      background: var(--text);
-      color: var(--bg);
-      font-size: 14px;
-      cursor: pointer;
-      font-family: var(--font);
-      font-weight: 500;
-      margin-top: 0.5rem;
-      transition: opacity .15s;
-    }
-
-    .btn:hover { opacity: 0.85; }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .result-card {
-      margin-top: 1.5rem;
-      padding: 1rem 1.25rem;
-      background: var(--bg2);
-      border-radius: var(--radius-lg);
-      border: 0.5px solid var(--border);
-    }
-
-    .result-hd {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .result-lbl {
-      font-size: 11px;
-      color: var(--text3);
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-    }
-
-    .copy-btn {
-      font-size: 12px;
-      padding: 3px 10px;
-      border: 0.5px solid var(--border2);
-      border-radius: var(--radius);
-      background: transparent;
-      color: var(--text2);
-      cursor: pointer;
-      font-family: var(--font);
-      transition: all .15s;
-    }
-
-    .copy-btn:hover {
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    .code-out {
-      font-size: 13px;
-      line-height: 1.75;
-      color: var(--text);
-      white-space: pre-wrap;
-      font-family: var(--mono);
-    }
-
-    .score-row {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
+    label.lbl { font-size: 13px; color: var(--text2); margin-bottom: 6px; display: block; }
+    input.inp, textarea.inp { width: 100%; padding: 8px 12px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); font-size: 14px; font-family: var(--font); line-height: 1.5; outline: none; }
+    textarea.inp { resize: vertical; min-height: 120px; line-height: 1.7; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { padding: 5px 12px; border: 0.5px solid var(--border); border-radius: 20px; font-size: 13px; cursor: pointer; background: transparent; color: var(--text2); font-family: var(--font); transition: all .15s; }
+    .chip.on { background: var(--bg2); color: var(--text); border-color: var(--border2); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+    .btn { width: 100%; padding: 10px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--text); color: var(--bg); font-size: 14px; cursor: pointer; font-family: var(--font); font-weight: 500; margin-top: 0.5rem; transition: opacity .15s; }
+    .btn:hover { opacity: .85; } .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .result-card { margin-top: 1.5rem; padding: 1rem 1.25rem; background: var(--bg2); border-radius: var(--radius-lg); border: 0.5px solid var(--border); }
+    .result-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .result-lbl { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
+    .copy-btn { font-size: 12px; padding: 3px 10px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: transparent; color: var(--text2); cursor: pointer; font-family: var(--font); transition: all .15s; }
+    .copy-btn:hover { background: var(--bg); color: var(--text); }
+    .code-out { font-size: 13px; line-height: 1.75; color: var(--text); white-space: pre-wrap; font-family: var(--mono); }
+    .score-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
     .score-n { font-size: 26px; font-weight: 500; }
     .score-s { font-size: 13px; color: var(--text2); }
-
-    .issue {
-      padding: 7px 0;
-      border-bottom: 0.5px solid var(--border);
-      font-size: 13px;
-      color: var(--text2);
-      line-height: 1.5;
-    }
-
+    .issue { padding: 7px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; color: var(--text2); line-height: 1.5; }
     .issue:last-child { border-bottom: none; }
     .issues { margin-bottom: 14px; }
-
-    .loading {
-      font-size: 13px;
-      color: var(--text2);
-      padding: 1rem 0;
-      text-align: center;
-    }
-
-    .divider {
-      height: 0.5px;
-      background: var(--border);
-      margin: 14px 0;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 1.5rem;
-      font-size: 12px;
-      color: var(--text3);
-    }
+    .loading { font-size: 13px; color: var(--text2); padding: 1rem 0; text-align: center; }
+    .divider { height: 0.5px; background: var(--border); margin: 14px 0; }
+    .footer { text-align: center; margin-top: 1.5rem; font-size: 12px; color: var(--text3); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>Prompt Generator</h1>
-      <p>Build prompts from scratch or fix broken ones — powered by Claude</p>
-    </div>
-
-    <div class="card">
-      <div class="tabs">
-        <button class="tab on" onclick="switchTab('b')">Builder mode</button>
-        <button class="tab" onclick="switchTab('f')">Fixer mode</button>
-      </div>
-
-      <div id="sec-b" class="sec on">
-        <div class="step">
-          <label class="lbl">What's the task?</label>
-          <input class="inp" id="b-task" placeholder="e.g. Analyze customer churn data, Write a cold email, Debug Python code..." />
-        </div>
-        <div class="row">
-          <div class="step">
-            <label class="lbl">Role for Claude</label>
-            <input class="inp" id="b-role" placeholder="e.g. Senior Data Scientist..." />
-          </div>
-          <div class="step">
-            <label class="lbl">Audience</label>
-            <input class="inp" id="b-audience" placeholder="e.g. Non-technical CEO..." />
-          </div>
-        </div>
-        <div class="step">
-          <label class="lbl">Tone</label>
-          <div class="chips" id="c-tone">
-            <button class="chip" onclick="chip(this,'tone')">Professional</button>
-            <button class="chip" onclick="chip(this,'tone')">Direct & no-nonsense</button>
-            <button class="chip" onclick="chip(this,'tone')">Friendly & clear</button>
-            <button class="chip" onclick="chip(this,'tone')">Technical & precise</button>
-            <button class="chip" onclick="chip(this,'tone')">Casual</button>
-          </div>
-        </div>
-        <div class="step">
-          <label class="lbl">Output format</label>
-          <div class="chips" id="c-fmt">
-            <button class="chip" onclick="chip(this,'fmt')">Bullet points</button>
-            <button class="chip" onclick="chip(this,'fmt')">Numbered steps</button>
-            <button class="chip" onclick="chip(this,'fmt')">Prose paragraphs</button>
-            <button class="chip" onclick="chip(this,'fmt')">Table</button>
-            <button class="chip" onclick="chip(this,'fmt')">Structured sections</button>
-          </div>
-        </div>
-        <div class="step">
-          <label class="lbl">Constraints (optional)</label>
-          <input class="inp" id="b-constraints" placeholder="e.g. Under 300 words, no jargon, include examples..." />
-        </div>
-        <button class="btn" id="btn-b" onclick="runBuilder()">Generate prompt ↗</button>
-        <div id="res-b"></div>
-      </div>
-
-      <div id="sec-f" class="sec">
-        <div class="step">
-          <label class="lbl">Paste your bad prompt here</label>
-          <textarea class="inp" id="f-input" placeholder="Paste any prompt — vague, broken, over-complicated — and I'll score it, find all the issues, and rewrite it properly."></textarea>
-        </div>
-        <button class="btn" id="btn-f" onclick="runFixer()">Analyze & fix ↗</button>
-        <div id="res-f"></div>
-      </div>
-    </div>
-
-    <div class="footer">Built with Claude · Prompt Generator</div>
+<div class="container">
+  <div class="header">
+    <h1>Prompt Generator</h1>
+    <p>Build prompts from scratch or fix broken ones — powered by Gemini</p>
   </div>
 
-  <script>
-    const chips = { tone: null, fmt: null };
-    const results = {};
+  <div class="api-bar">
+    <input type="password" id="api-key-input" placeholder="Paste your Gemini API key here..." />
+    <button class="api-save" onclick="saveKey()">Save key</button>
+  </div>
+  <div class="api-status" id="api-status">⚠ No API key set — add your Gemini key above to use the tool</div>
 
-    const ANTHROPIC_API_KEY = 'YOUR_API_KEY_HERE';
+  <div class="card">
+    <div class="tabs">
+      <button class="tab on" onclick="switchTab('b')">Builder mode</button>
+      <button class="tab" onclick="switchTab('f')">Fixer mode</button>
+    </div>
 
-    function switchTab(m) {
-      document.querySelectorAll('.tab').forEach((t, i) =>
-        t.classList.toggle('on', (i === 0 && m === 'b') || (i === 1 && m === 'f'))
-      );
-      document.getElementById('sec-b').classList.toggle('on', m === 'b');
-      document.getElementById('sec-f').classList.toggle('on', m === 'f');
+    <div id="sec-b" class="sec on">
+      <div class="step">
+        <label class="lbl">What's the task?</label>
+        <input class="inp" id="b-task" placeholder="e.g. Analyze customer churn data, Write a cold email, Debug Python code..." />
+      </div>
+      <div class="row">
+        <div class="step">
+          <label class="lbl">Role for the AI</label>
+          <input class="inp" id="b-role" placeholder="e.g. Senior Data Scientist..." />
+        </div>
+        <div class="step">
+          <label class="lbl">Audience</label>
+          <input class="inp" id="b-audience" placeholder="e.g. Non-technical CEO..." />
+        </div>
+      </div>
+      <div class="step">
+        <label class="lbl">Tone</label>
+        <div class="chips" id="c-tone">
+          <button class="chip" onclick="chip(this,'tone')">Professional</button>
+          <button class="chip" onclick="chip(this,'tone')">Direct & no-nonsense</button>
+          <button class="chip" onclick="chip(this,'tone')">Friendly & clear</button>
+          <button class="chip" onclick="chip(this,'tone')">Technical & precise</button>
+          <button class="chip" onclick="chip(this,'tone')">Casual</button>
+        </div>
+      </div>
+      <div class="step">
+        <label class="lbl">Output format</label>
+        <div class="chips" id="c-fmt">
+          <button class="chip" onclick="chip(this,'fmt')">Bullet points</button>
+          <button class="chip" onclick="chip(this,'fmt')">Numbered steps</button>
+          <button class="chip" onclick="chip(this,'fmt')">Prose paragraphs</button>
+          <button class="chip" onclick="chip(this,'fmt')">Table</button>
+          <button class="chip" onclick="chip(this,'fmt')">Structured sections</button>
+        </div>
+      </div>
+      <div class="step">
+        <label class="lbl">Constraints (optional)</label>
+        <input class="inp" id="b-constraints" placeholder="e.g. Under 300 words, no jargon, include examples..." />
+      </div>
+      <button class="btn" id="btn-b" onclick="runBuilder()">Generate prompt ↗</button>
+      <div id="res-b"></div>
+    </div>
+
+    <div id="sec-f" class="sec">
+      <div class="step">
+        <label class="lbl">Paste your bad prompt here</label>
+        <textarea class="inp" id="f-input" placeholder="Paste any prompt — vague, broken, over-complicated — and I'll score it, find all the issues, and rewrite it properly."></textarea>
+      </div>
+      <button class="btn" id="btn-f" onclick="runFixer()">Analyze & fix ↗</button>
+      <div id="res-f"></div>
+    </div>
+  </div>
+
+  <div class="footer">Built with Gemini · Prompt Generator</div>
+</div>
+
+<script>
+  const state = { chips: { tone: null, fmt: null }, results: {}, apiKey: '' };
+
+  function saveKey() {
+    const k = document.getElementById('api-key-input').value.trim();
+    if (!k) { alert('Please paste your API key first.'); return; }
+    state.apiKey = k;
+    document.getElementById('api-key-input').value = '';
+    const s = document.getElementById('api-status');
+    s.textContent = '✅ API key saved — ready to use';
+    s.className = 'api-status ok';
+  }
+
+  function switchTab(m) {
+    document.querySelectorAll('.tab').forEach((t, i) =>
+      t.classList.toggle('on', (i === 0 && m === 'b') || (i === 1 && m === 'f'))
+    );
+    document.getElementById('sec-b').classList.toggle('on', m === 'b');
+    document.getElementById('sec-f').classList.toggle('on', m === 'f');
+  }
+
+  function chip(el, g) {
+    document.querySelectorAll(`#c-${g} .chip`).forEach(c => c.classList.remove('on'));
+    el.classList.add('on');
+    state.chips[g] = el.textContent;
+  }
+
+  async function callGemini(prompt) {
+    if (!state.apiKey) throw new Error('No API key. Add your Gemini key above.');
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${state.apiKey}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 1000 }
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.candidates[0].content.parts[0].text;
+  }
+
+  async function runBuilder() {
+    const task = document.getElementById('b-task').value.trim();
+    if (!task) { alert('Please enter a task first.'); return; }
+    if (!state.apiKey) { alert('Please save your Gemini API key first.'); return; }
+    const role = document.getElementById('b-role').value.trim();
+    const aud  = document.getElementById('b-audience').value.trim();
+    const con  = document.getElementById('b-constraints').value.trim();
+    const btn  = document.getElementById('btn-b');
+    btn.disabled = true; btn.textContent = 'Generating...';
+    document.getElementById('res-b').innerHTML = '<p class="loading">Building your prompt...</p>';
+    const meta = `Task: ${task}\nRole for the AI: ${role||'not specified'}\nAudience: ${aud||'not specified'}\nTone: ${state.chips.tone||'not specified'}\nOutput format: ${state.chips.fmt||'not specified'}\nConstraints: ${con||'none'}`;
+    const ask = `You are a world-class prompt engineer. Given these details, write a production-ready prompt. Make it specific, structured, and immediately usable. Output ONLY the prompt — no preamble, no explanation, no backticks.\n\n${meta}`;
+    try {
+      const out = await callGemini(ask);
+      state.results.b = out;
+      document.getElementById('res-b').innerHTML = `<div class="result-card"><div class="result-hd"><span class="result-lbl">Generated prompt</span><button class="copy-btn" onclick="cp('b',this)">Copy</button></div><div class="code-out">${esc(out)}</div></div>`;
+    } catch(e) {
+      document.getElementById('res-b').innerHTML = `<p class="loading">Error: ${esc(e.message)}</p>`;
     }
+    btn.disabled = false; btn.textContent = 'Generate prompt ↗';
+  }
 
-    function chip(el, g) {
-      document.querySelectorAll(`#c-${g} .chip`).forEach(c => c.classList.remove('on'));
-      el.classList.add('on');
-      chips[g] = el.textContent;
+  async function runFixer() {
+    const bad = document.getElementById('f-input').value.trim();
+    if (!bad) { alert('Please paste a prompt to fix.'); return; }
+    if (!state.apiKey) { alert('Please save your Gemini API key first.'); return; }
+    const btn = document.getElementById('btn-f');
+    btn.disabled = true; btn.textContent = 'Analyzing...';
+    document.getElementById('res-f').innerHTML = '<p class="loading">Analyzing your prompt...</p>';
+    const ask = `You are a senior prompt engineer. Analyze this prompt and respond ONLY with a raw JSON object — no backticks, no markdown, no commentary:\n\n{"score":<number 1-10>,"summary":"<one sentence describing the main problem>","issues":["issue 1","issue 2","issue 3"],"fixed":"<the fully rewritten production-ready prompt>"}\n\nPrompt to analyze:\n${bad}`;
+    try {
+      const raw = await callGemini(ask);
+      const d = JSON.parse(raw.replace(/```json|```/g,'').trim());
+      state.results.f = d.fixed;
+      const sc = d.score >= 8 ? 'var(--success)' : d.score >= 5 ? 'var(--warning)' : 'var(--danger)';
+      document.getElementById('res-f').innerHTML = `
+        <div class="result-card">
+          <div class="score-row"><span class="score-n" style="color:${sc}">${d.score}/10</span><span class="score-s">${esc(d.summary)}</span></div>
+          <div class="result-lbl" style="margin-bottom:8px">Issues found</div>
+          <div class="issues">${d.issues.map(i=>`<div class="issue">— ${esc(i)}</div>`).join('')}</div>
+          <div class="divider"></div>
+          <div class="result-hd"><span class="result-lbl">Fixed prompt</span><button class="copy-btn" onclick="cp('f',this)">Copy</button></div>
+          <div class="code-out">${esc(d.fixed)}</div>
+        </div>`;
+    } catch(e) {
+      document.getElementById('res-f').innerHTML = `<p class="loading">Error: ${esc(e.message)}</p>`;
     }
+    btn.disabled = false; btn.textContent = 'Analyze & fix ↗';
+  }
 
-    async function callClaude(userMsg) {
-      const r = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: userMsg }]
-        })
-      });
-      const d = await r.json();
-      if (d.error) throw new Error(d.error.message);
-      return d.content[0].text;
-    }
+  function cp(k, btn) {
+    navigator.clipboard.writeText(state.results[k] || '');
+    btn.textContent = 'Copied';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  }
 
-    async function runBuilder() {
-      const task = document.getElementById('b-task').value.trim();
-      if (!task) { alert('Please enter a task first.'); return; }
-      const role = document.getElementById('b-role').value.trim();
-      const aud = document.getElementById('b-audience').value.trim();
-      const con = document.getElementById('b-constraints').value.trim();
-      const btn = document.getElementById('btn-b');
-      btn.disabled = true; btn.textContent = 'Generating...';
-      document.getElementById('res-b').innerHTML = '<p class="loading">Building your prompt...</p>';
-      const meta = `Task: ${task}\nRole for Claude: ${role || 'not specified'}\nAudience: ${aud || 'not specified'}\nTone: ${chips.tone || 'not specified'}\nOutput format: ${chips.fmt || 'not specified'}\nConstraints: ${con || 'none'}`;
-      const ask = `You are a world-class prompt engineer. Given these details, write a production-ready prompt for Claude. Make it specific, structured, and immediately usable. Output ONLY the prompt — no preamble, no explanation, no backticks.\n\n${meta}`;
-      try {
-        const out = await callClaude(ask);
-        results.b = out;
-        document.getElementById('res-b').innerHTML = `
-          <div class="result-card">
-            <div class="result-hd">
-              <span class="result-lbl">Generated prompt</span>
-              <button class="copy-btn" onclick="cp('b',this)">Copy</button>
-            </div>
-            <div class="code-out">${esc(out)}</div>
-          </div>`;
-      } catch (e) {
-        document.getElementById('res-b').innerHTML = `<p class="loading">Error: ${e.message}</p>`;
-      }
-      btn.disabled = false; btn.textContent = 'Generate prompt ↗';
-    }
-
-    async function runFixer() {
-      const bad = document.getElementById('f-input').value.trim();
-      if (!bad) { alert('Please paste a prompt to fix.'); return; }
-      const btn = document.getElementById('btn-f');
-      btn.disabled = true; btn.textContent = 'Analyzing...';
-      document.getElementById('res-f').innerHTML = '<p class="loading">Analyzing your prompt...</p>';
-      const ask = `You are a senior prompt engineer. Analyze this prompt and respond ONLY with a raw JSON object — no backticks, no markdown, no commentary:\n\n{"score":<1-10>,"summary":"<one sentence on main issue>","issues":["issue 1","issue 2","issue 3"],"fixed":"<the fully rewritten prompt>"}\n\nPrompt to analyze:\n${bad}`;
-      try {
-        const raw = await callClaude(ask);
-        const d = JSON.parse(raw.replace(/```json|```/g, '').trim());
-        results.f = d.fixed;
-        const sc = d.score >= 8 ? 'var(--success)' : d.score >= 5 ? 'var(--warning)' : 'var(--danger)';
-        document.getElementById('res-f').innerHTML = `
-          <div class="result-card">
-            <div class="score-row">
-              <span class="score-n" style="color:${sc}">${d.score}/10</span>
-              <span class="score-s">${esc(d.summary)}</span>
-            </div>
-            <div class="result-lbl" style="margin-bottom:8px">Issues found</div>
-            <div class="issues">${d.issues.map(i => `<div class="issue">— ${esc(i)}</div>`).join('')}</div>
-            <div class="divider"></div>
-            <div class="result-hd">
-              <span class="result-lbl">Fixed prompt</span>
-              <button class="copy-btn" onclick="cp('f',this)">Copy</button>
-            </div>
-            <div class="code-out">${esc(d.fixed)}</div>
-          </div>`;
-      } catch (e) {
-        document.getElementById('res-f').innerHTML = `<p class="loading">Parse error — try again.</p>`;
-      }
-      btn.disabled = false; btn.textContent = 'Analyze & fix ↗';
-    }
-
-    function cp(k, btn) {
-      navigator.clipboard.writeText(results[k] || '');
-      btn.textContent = 'Copied';
-      setTimeout(() => btn.textContent = 'Copy', 1500);
-    }
-
-    function esc(s) {
-      return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-  </script>
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
 </body>
 </html>
